@@ -65,9 +65,11 @@ class Graph:
         open_list.append(current)
 
     def real_duration(self, d, wv):
-        du = d*(1.0+(wv[2] + random.betavariate(wv[0], wv[1])))
-        return du
-    
+        alpha, beta, offset = wv
+        # range: [2.0, 3.0], offset is always set to 1.0
+        multiplier = 1.0 + offset + random.betavariate(alpha, beta)
+        return d * multiplier
+
     def update(self):
         open_list = []
         closed_list = []
