@@ -27,7 +27,7 @@ run-debug: build-debug
 	./solver/build-debug/Debug/fjsspw_solver_cpp.exe "solver/config/ga.cfg" "instances/Example_Instances_FJSSP-WF"
 
 # 	Remove all builds
-clean:
+clean: clean-py
 	rm -rf solver/build-debug
 	rm -rf solver/build-prod
 
@@ -38,7 +38,7 @@ build-py: uninstall
 clean-py:
 	rm -rf solver/build-python
 
-uninstall: clean-py
+uninstall:
 	pip uninstall fjsspw-solver -y
 
 test:
@@ -47,7 +47,7 @@ test:
 retest: build-py test
 
 experiments: build-prod
-	python prepare_experiments.py deterministic -e $(EXEC) -n $(RUNS)
+	python -m prepare_experiments deterministic -e $(EXEC) -n $(RUNS)
 	chmod u+x run_experiments.sh
 	@echo "=========================================================================="
 	@echo "  Replace all 'echo' calls in 'run_experiments.sh' with the actual built  "
@@ -67,10 +67,10 @@ run-experiments: clean-experiments experiments
 
 # Python experiments (uncertain fitness evaluation function)
 experiments-python: build-py
-	python prepare_experiments.py uncertainty --output out/logs/uncertainty --run $(RUNS)
+	python -m prepare_experiments uncertainty --output out/logs/uncertainty --run $(RUNS)
 
 experiments-python-nohup: build-py
-	python prepare_experiments.py uncertainty --output out/logs/uncertainty --run $(RUNS) --nohup
+	python -m prepare_experiments uncertainty --output out/logs/uncertainty --run $(RUNS) --nohup
 
 run-experiments-python: experiments-python
 	./run_experiments.sh
