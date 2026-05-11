@@ -47,7 +47,7 @@ test:
 retest: build-py test
 
 experiments: build-prod
-	python prepare_experiments.py -e $(EXEC) -n $(RUNS)
+	python prepare_experiments.py deterministic -e $(EXEC) -n $(RUNS)
 	chmod u+x run_experiments.sh
 	@echo "=========================================================================="
 	@echo "  Replace all 'echo' calls in 'run_experiments.sh' with the actual built  "
@@ -63,4 +63,17 @@ clean-experiments:
 	rm -rf out/logs
 
 run-experiments: clean-experiments experiments
+	./run_experiments.sh
+
+# Python experiments (uncertain fitness evaluation function)
+experiments-python: build-py
+	python prepare_experiments.py uncertainty --output out/logs/uncertainty --run $(RUNS)
+
+experiments-python-nohup: build-py
+	python prepare_experiments.py uncertainty --output out/logs/uncertainty --run $(RUNS) --nohup
+
+run-experiments-python: experiments-python
+	./run_experiments.sh
+
+run-experiments-python-nohup: experiments-python-nohup
 	./run_experiments.sh
