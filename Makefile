@@ -59,6 +59,19 @@ experiments: build-prod
 	@echo "    ./run_experiments.sh                                                  "
 	@echo "=========================================================================="
 
+experiments-nohup: build-prod
+	python -m prepare_experiments deterministic -e $(EXEC) -n $(RUNS) --nohup
+	chmod u+x run_experiments.sh
+	@echo "=========================================================================="
+	@echo "  Replace all 'echo' calls in 'run_experiments.sh' with the actual built  "
+	@echo "  executable to finish preparing the experiments.                         "
+	@echo "  Or simply add 'EXEC=<path/to/exec>' when running this target, like:     "
+	@echo "  'make experiments EXEC=<path>'                                          "
+	@echo "                                                                          "
+	@echo "  Execute all experiments:                                                "
+	@echo "    ./run_experiments.sh                                                  "
+	@echo "=========================================================================="
+
 clean-experiments:
 	rm -rf out/logs
 
