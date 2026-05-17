@@ -109,8 +109,8 @@ def translate(sequence: list[int], machines: list[int], workers: list[int], dura
         # machine = machines[start_index]
         # worker = workers[start_index]
         # Changed to
-        machine = machines[i]
-        worker = workers[i]
+        machine = machines[start_index]
+        worker = workers[start_index]
         duration = durations[start_index][machine][worker]
         if verbose:
             print(
