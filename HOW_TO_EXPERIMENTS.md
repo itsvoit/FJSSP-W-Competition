@@ -1,6 +1,47 @@
 # How to reproduce the experiments
 
-## Deterministic - FJSSP-W
+## Info
+
+- Each `append...` script builds the application and appends run configurations to the `./run_experiments.sh` script.
+
+## Deterministic - FJSSP-W (new way)
+### Each optimisation run on a different core, with nohup
+```bash
+# It will build the application with Release build type and ask you to pass the path to the executable
+./append_deterministic_experiments_multicore_nohup.sh
+
+# Second run of the script will prepare another script meant for running the experiments
+./append_deterministic_experiments_multicore_nohup.sh 30 <path/to/exec>
+
+# Run experiments with a throttle of N processes at once
+nohup bash -c 'cat run_experiments.sh | sed "s/&\s*$//" | xargs -P <N> -I {} bash -c "{}"' > manager.log 2>&1 &
+```
+
+### Each instance (N runs) on a diffent core, with nohup
+```bash
+# It will build the application with Release build type and ask you to pass the path to the executable
+./append_deterministic_experiments_nohup.sh
+
+# Second run of the script will prepare another script meant for running the experiments
+./append_deterministic_experiments_nohup.sh 30 <path/to/exec>
+
+# Then to run experiments
+./run_experiments.sh
+```
+
+### All instances on a single core
+```bash
+# It will build the application with Release build type and ask you to pass the path to the executable
+./append_deterministic_experiments.sh
+
+# Second run of the script will prepare another script meant for running the experiments
+./append_deterministic_experiments.sh 30 <path/to/exec>
+
+# Then to run experiments
+./run_experiments.sh
+```
+
+## Deterministic - FJSSP-W (old way)
 
 ```bash
 # Create the configurations and output directory + build the application
@@ -21,29 +62,47 @@ chmod u+x run_experiments.sh
 
 ## Undeterministic - FJSSP-WU
 
+### Each optimisation run on a different core, with nohup
 ```bash
-# Craete a virtual environment of your choice (here: venv)
-python -m venv venv
+# It will build the application with Release build type and ask you to pass the path to the executable
+./append_uncertainty_experiments_multicore_nohup.sh
 
-# Active the virtual env
-source venv/bin/activate
+# Second run of the script will prepare another script meant for running the experiments
+./append_uncertainty_experiments_multicore_nohup.sh 30 <path/to/exec>
 
-# Build the application and install the python package
-make experiments-python
+# Run experiments with a throttle of N processes at once
+nohup bash -c 'cat run_experiments.sh | sed "s/&\s*$//" | xargs -P <N> -I {} bash -c "{}"' > manager.log 2>&1 &
+```
 
-# Alternatively if you want to run experiments in parallel on Linux system add -nohup
-make experiments-python-nohup
+### Each instance (N runs) on a diffent core, with nohup
+```bash
+# It will build the application with Release build type and ask you to pass the path to the executable
+./append_uncertainty_experiments_nohup.sh
 
-# Make the run script executable
-chmod u+x run_experiments.sh
+# Second run of the script will prepare another script meant for running the experiments
+./append_uncertainty_experiments_nohup.sh 30 <path/to/exec>
 
-# Run experiments
+# Then to run experiments
+./run_experiments.sh
+```
+
+### All instances on a single core
+```bash
+# It will build the application with Release build type and ask you to pass the path to the executable
+./append_uncertainty_experiments.sh
+
+# Second run of the script will prepare another script meant for running the experiments
+./append_uncertainty_experiments.sh 30 <path/to/exec>
+
+# Then to run experiments
 ./run_experiments.sh
 ```
 
 # Outputs
 
-All outputs will be available under `out/logs/<deterministic/uncertainty>/`
+All outputs will be available under `out/logs/<deterministic/uncertainty-factorX>/`
+
+When running with `nohup` there will be another output directory with all stdout and stderr outputs from all instances under `nohup-out/<instance>.out`
 
 ## Structure
 

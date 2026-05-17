@@ -1,36 +1,49 @@
-import os
-
 from argparse import Namespace
-from pathlib import Path
 
-from .common import add_nohup, add_arguments_common, prepare_experiments_common
-from .configs import config_file_name
+from .common import add_arguments_common, prepare_log_dirs, prepare_bash, prepare_configs
+from .configs import uncertainty_instance_to_config_map, deterministic_instance_to_config_map
             
             
 def uncertainty_parser(subparsers):
     parser = subparsers.add_parser("uncertainty", aliases=["u"])
     add_arguments_common(parser)
+    parser.add_argument("--factor", "-f", help="Uncertainty factor, used like: alpha = random, beta = factor*alpha", type=float, default=10.0)
     parser.set_defaults(func=prepare_experiments_uncertainty)
     
 
 def prepare_experiments_uncertainty(args: Namespace):
+    executable = args.executable
     output_root = args.output
     runs = args.runs
     instances_root = args.instances
     bash_output = args.bash_output
+    nohup = args.nohup
+    append = args.append
+    split = args.split
+    factor = args.factor
     
-    prepare_experiments_common(instances_root, output_root, runs)
-    prepare_bash_uncertainty(instances_root, output_root, bash_output, runs, args.nohup)
-
-
-def prepare_bash_uncertainty(instances_root: Path, output_root: Path, bash_output: Path, runs: int, nohup: bool = False):
-    def opener(path, flags):
-        return os.open(path, flags, 0o744)
+    config_map = deterministic_instance_to_config_map
     
-    with open(bash_output, mode='w+', encoding='utf-8', opener=opener) as handle:
-        for instance_logs in output_root.iterdir():
-            config_path = instance_logs / config_file_name
-            cmd = f"python run_experiments.py --instances {instances_root.as_posix()} --config {config_path.as_posix()} --runs {runs}"
-            if nohup:
-                cmd = add_nohup(cmd, instance_logs.stem)
-            print(cmd, file=handle)
+    prepare_log_dirs(
+        instances_root=instances_root,
+        output_root=output_root,
+        instances_map=config_map,
+        runs=runs,
+    )
+    prepare_configs(
+        instances_root=instances_root,
+        output_root=output_root,
+        instances_map=config_map,
+        factor=factor,
+        split=split,
+    )
+    prepare_bash(
+        instances_root=instances_root,
+        output_root=output_root,
+        bash_output=bash_output,
+        executable=executable,
+        runs=runs,
+        nohup=nohup,
+        append=append,
+        split=split,
+    )
