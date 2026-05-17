@@ -8,28 +8,29 @@ RUNS := 10
 # Native application targets
 # 	Production build
 build-prod:
-	cmake -S ./solver -B ./solver/build-prod/ -DCMAKE_BUILD_TYPE=Release -DBUILD_PYTHON=OFF
-	cmake --build ./solver/build-prod/ --target fjsspw_solver_cpp --config Release
+	cmake -S ./solver -B ./solver/build/ -DCMAKE_BUILD_TYPE=Release -DBUILD_PYTHON=OFF
+	cmake --build ./solver/build/ --target fjsspw_solver_cpp --config Release
 
 run-prod: build-prod
-	./solver/build-prod/Release/fjsspw_solver_cpp.exe "solver/config/ga.cfg" "instances/Example_Instances_FJSSP-WF"
+	./solver/build/Release/fjsspw_solver_cpp.exe "solver/config/ga.cfg" "instances/Example_Instances_FJSSP-WF"
 
 # 	Debug build
 build-debug:
-	cmake -S ./solver -B ./solver/build-debug/ -DCMAKE_BUILD_TYPE=Debug -DBUILD_PYTHON=OFF
-	cmake --build ./solver/build-debug/ --target fjsspw_solver_cpp
+	cmake -S ./solver -B ./solver/build/ -DCMAKE_BUILD_TYPE=Debug -DBUILD_PYTHON=OFF
+	cmake --build ./solver/build/ --target fjsspw_solver_cpp
 
 build-profile:
-	cmake -S ./solver -B ./solver/build-profile/ -DCMAKE_BUILD_TYPE=RelWithDebInfo -DBUILD_PYTHON=OFF
-	cmake --build ./solver/build-profile/ --target fjsspw_solver_cpp --config RelWithDebInfo
+	cmake -S ./solver -B ./solver/build/ -DCMAKE_BUILD_TYPE=RelWithDebInfo -DBUILD_PYTHON=OFF
+	cmake --build ./solver/build/ --target fjsspw_solver_cpp --config RelWithDebInfo
 
 run-debug: build-debug
-	./solver/build-debug/Debug/fjsspw_solver_cpp.exe "solver/config/ga.cfg" "instances/Example_Instances_FJSSP-WF"
+	./solver/build/Debug/fjsspw_solver_cpp.exe "solver/config/ga.cfg" "instances/Example_Instances_FJSSP-WF"
 
 # 	Remove all builds
 clean: clean-py
 	rm -rf solver/build-debug
 	rm -rf solver/build-prod
+	rm -rf solver/build
 
 # Python bindings
 build-py: uninstall
